@@ -28,6 +28,9 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         configuUI()
         configLayout()
+        
+        goLottobutton.addTarget(self, action: #selector(goLottoScreen), for: .touchUpInside)
+        goMovieButton.addTarget(self, action: #selector(goMovieScreen), for: .touchUpInside)
     }
     
     func configuUI() {
@@ -48,6 +51,15 @@ class ViewController: UIViewController {
             make.height.equalTo(44)
             
         }
+    }
+    
+    @objc func goLottoScreen() {
+        print(#function)
+    }
+    
+    @objc func goMovieScreen() {
+        print(#function)
+        
     }
 }
 
