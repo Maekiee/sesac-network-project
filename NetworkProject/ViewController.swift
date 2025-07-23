@@ -62,6 +62,9 @@ class ViewController: UIViewController {
     
     @objc func goMovieScreen() {
         print(#function)
+        let vc = MovieViewController()
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true)
         
     }
 }
