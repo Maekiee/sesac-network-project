@@ -14,13 +14,26 @@ class LottoViewController: UIViewController {
         return button
     }()
     
-    let textField: UITextField = {
+    let pickerView: UIPickerView = {
+        let pickerView = UIPickerView()
+        return pickerView
+    }()
+    
+    let toolBar: UIToolbar = {
+        let toolBar = UIToolbar()
+        toolBar.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
+        return toolBar
+    }()
+    
+    lazy var textField: UITextField = {
         let textField = UITextField()
         textField.layer.cornerRadius = 8
         textField.borderStyle = .none
         textField.layer.borderColor = UIColor.gray.cgColor
         textField.layer.borderWidth = 1
-        textField.inputView = UIPickerView()
+        textField.inputView = pickerView
+        textField.inputAccessoryView = toolBar
+
         return textField
     }()
     
@@ -44,15 +57,14 @@ class LottoViewController: UIViewController {
         return view
     }()
     
-    let titleLabel: UILabel = {
+    lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "000회 당첨결과"
+        label.text = "1181회 당첨결과"
         label.textColor = .orange
         label.font = .boldSystemFont(ofSize: 20)
         return label
     }()
     
-  
     
     lazy var stackView: UIStackView = {
         let stackView = UIStackView()
@@ -62,8 +74,23 @@ class LottoViewController: UIViewController {
         stackView.distribution = .equalCentering
         for i in 1...8 {
             let circleLabel = CircleLabel()
-            circleLabel.text = "\(i)"
-            circleLabel.backgroundColor = .orange
+            let randomNum = Int.random(in: 1...45)
+            if i != 7 {
+                circleLabel.text = "\(randomNum)"
+                if randomNum <= 10 {
+                    circleLabel.backgroundColor = .orange
+                } else if randomNum > 10 && randomNum < 20 {
+                    circleLabel.backgroundColor = .blue
+                } else if randomNum > 20 && randomNum < 30 {
+                    circleLabel.backgroundColor = .green
+                } else {
+                    circleLabel.backgroundColor = .red
+                }
+            } else {
+                circleLabel.text = "+"
+                circleLabel.backgroundColor = .clear
+                circleLabel.textColor = .black
+            }
             
             circleLabel.snp.makeConstraints { make in
                 make.size.equalTo(40)
@@ -73,20 +100,13 @@ class LottoViewController: UIViewController {
         return stackView
     }()
     
-    
-    let circleLabel: CircleLabel = {
-        let label = CircleLabel()
-        for i in 1...8 {
-            label.text = "\(i)"
-            label.backgroundColor = .blue
-
-        }
-        
+    let bonusLable: UILabel = {
+        let label = UILabel()
+        label.text = "보너스"
+        label.textColor = .darkGray
+        label.font = .systemFont(ofSize: 14)
         return label
     }()
-    
-    
-    
     
 
     override func viewDidLoad() {
@@ -95,16 +115,59 @@ class LottoViewController: UIViewController {
         configureLayout()
         configureView()
         
+        setupToolBar()
         popbutton.addTarget(self, action: #selector(pop), for: .touchUpInside)
     }
+    
+    private func setupToolBar() {
+        let doneButton = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(colsedPickerView))
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        
+        
+        toolBar.setItems([flexibleSpace, doneButton], animated: false)
+    }
+    
     
     @objc func pop() {
         dismiss(animated: true)
     }
     
-
-
+    @objc func colsedPickerView() {
+        
+        view.endEditing(true)
+        
+    }
+    
+ 
 }
+
+
+
+// MARK: 피커뷰
+extension LottoViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    // 세로 아이템 몇개인지
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return 1181
+    }
+    
+    // 가로 아이템 몇개인지
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    // 보여질 데이터
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return "\(row + 1)"
+    }
+    
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        print(#function)
+        titleLabel.text = "\(row+1) 당첨결과"
+        textField.text = String(row+1)
+    }
+}
+
 
 
 extension LottoViewController: ViewdesignProtocol {
@@ -115,8 +178,8 @@ extension LottoViewController: ViewdesignProtocol {
         view.addSubview(dateLabel)
         view.addSubview(horizontalDividerView)
         view.addSubview(titleLabel)
-        view.addSubview(circleLabel)
         view.addSubview(stackView)
+        view.addSubview(bonusLable)
     }
     
     func configureLayout() {
@@ -154,16 +217,22 @@ extension LottoViewController: ViewdesignProtocol {
         
         stackView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(28)
-//            make.horizontalEdges.equalToSuperview().inset(20)
             make.centerX.equalToSuperview()
         }
         
-        
+        bonusLable.snp.makeConstraints { make in
+            make.top.equalTo(stackView.snp.bottom).offset(4)
+            make.trailing.equalToSuperview().inset(27)
+        }
         
     }
     
     func configureView() {
         view.backgroundColor = .white
+        pickerView.delegate = self
+        pickerView.dataSource = self
+        pickerView.selectRow(1180, inComponent: 0, animated: false)
+        textField.text = "1181"
     }
     
     
