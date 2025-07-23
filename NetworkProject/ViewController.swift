@@ -55,6 +55,9 @@ class ViewController: UIViewController {
     
     @objc func goLottoScreen() {
         print(#function)
+        let vc = LottoViewController()
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true)
     }
     
     @objc func goMovieScreen() {
