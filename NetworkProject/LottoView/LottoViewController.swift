@@ -70,21 +70,6 @@ class LottoViewController: UIViewController {
         return stackView
     }()
     
-    let bonusStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 8
-        stackView.alignment = .center
-        return stackView
-    }()
-//    let plusLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = "+"
-//        label.textColor = .black
-//        label.backgroundColor = .clear
-//        return label
-//    }()
-    
     let bonusLable: UILabel = {
         let label = UILabel()
         label.text = "보너스"
@@ -116,7 +101,20 @@ class LottoViewController: UIViewController {
                 circleLabel.textColor = .black
             } else {
                 circleLabel.text = "\(i)"
-                circleLabel.backgroundColor = .orange
+                switch i {
+                case 1...10:
+                    circleLabel.backgroundColor = .orange
+                case 11...20:
+                    circleLabel.backgroundColor = .red
+                case 21...30:
+                    circleLabel.backgroundColor = .systemIndigo
+                case 31...40:
+                    circleLabel.backgroundColor = .systemGreen
+                case 41...45:
+                    circleLabel.backgroundColor = .systemPurple
+                default:
+                    circleLabel.backgroundColor = .gray
+                }
             }
             
             circleLabel.snp.makeConstraints { make in
@@ -126,8 +124,14 @@ class LottoViewController: UIViewController {
         }
     }
     
-    private func getLottoInfo() {
-        let lottoApiUrl: String = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=1181"
+    private func getLottoInfo(turningCount: String = "1181") {
+        stackView.arrangedSubviews.forEach { view in
+            stackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+            drwNumbers = []
+        }
+        let lottoApiUrl: String = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=\(turningCount)"
+        
         AF.request(lottoApiUrl, method: .get)
             .responseDecodable(of: Lotto.self) { res in
                 switch res.result {
@@ -139,6 +143,7 @@ class LottoViewController: UIViewController {
                     self.drwNumbers.append(value.drwtNo5)
                     self.drwNumbers.append(value.drwtNo6)
                     self.drwNumbers.append(value.bnusNo)
+                    self.dateLabel.text = "\(value.drwNoDate) 추첨"
                     self.addLabelToStackView()
                 case .failure(let error):
                     print("에러", error)
@@ -158,7 +163,6 @@ class LottoViewController: UIViewController {
     
     @objc func colsedPickerView() {
         view.endEditing(true)
-        
     }
 }
 
@@ -181,6 +185,8 @@ extension LottoViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         print(#function)
         titleLabel.text = "\(row+1) 당첨결과"
         textField.text = String(row+1) // 텍스트 필드에 보여질 회차 텍스트
+        guard let turningCount = textField.text else { return }
+        getLottoInfo(turningCount: turningCount)
     }
     
     // 픽커뷰에 보여질 데이터

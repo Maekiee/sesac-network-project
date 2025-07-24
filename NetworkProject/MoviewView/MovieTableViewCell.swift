@@ -34,11 +34,10 @@ class MovieTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configCellData(row: Movie, index: Int) {
-        rankingLabel.text = "\(index + 1)"
-        titleLabel.text = row.title
-        dateLabel.text = row.releaseDate
-        print(row.title)
+    func configCellData(row: BoxOffice, index: Int) {
+        rankingLabel.text = row.rank
+        titleLabel.text = row.movieNm
+        dateLabel.text = row.openDt
     }
 }
 
