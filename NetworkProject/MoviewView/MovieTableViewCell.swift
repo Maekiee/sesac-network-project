@@ -7,19 +7,19 @@ class MovieTableViewCell: UITableViewCell {
     let rankingLabel: UILabel = {
         let label = UILabel()
         label.backgroundColor = .black
+        label.textAlignment = .center
         label.textColor = .white
         return label
     }()
-    
     let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         return label
     }()
-    
     let dateLabel: UILabel = {
         let label = UILabel()
         label.textColor = .gray
+        label.font = .systemFont(ofSize: 14)
         return label
     }()
     
@@ -50,17 +50,14 @@ extension MovieTableViewCell: ViewdesignProtocol {
     
     func configureLayout() {
         rankingLabel.snp.makeConstraints { make in
-            make.top.equalTo(contentView.safeAreaLayoutGuide).inset(4)
+            make.centerY.equalToSuperview()
             make.leading.equalTo(contentView.safeAreaLayoutGuide).inset(16)
-            make.height.equalTo(28)
+            make.size.equalTo(32)
         }
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(contentView.safeAreaLayoutGuide).inset(4)
-            make.leading.equalTo(rankingLabel.snp.trailing).offset(4)
-            make.height.equalTo(22)
             make.centerY.equalTo(contentView)
+            make.leading.equalTo(rankingLabel.snp.trailing).offset(4)
         }
-        
         dateLabel.snp.makeConstraints { make in
             make.top.equalTo(contentView.safeAreaLayoutGuide).inset(4)
             make.trailing.equalTo(contentView.safeAreaLayoutGuide).inset(16)

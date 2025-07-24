@@ -103,6 +103,9 @@ class MovieViewController: UIViewController {
 extension MovieViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         view.endEditing(true)
+
+        guard let inputValue = textField.text else { return true}
+        fetchMovieDate(inputValue: inputValue)
         return true
     }
 }
