@@ -73,6 +73,8 @@ class MovieViewController: UIViewController {
                 formatter.locale = Locale(identifier: "ko_KR")
                 targetDate = formatter.string(from: yesterday)
             }
+        
+        
         let apiUrl: String = "https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=87326d7892a79b81ae16230feed7ac72&targetDt=\(targetDate)"
         
         AF.request(apiUrl, method: .get)
@@ -162,11 +164,6 @@ extension MovieViewController: ViewdesignProtocol {
     
     func configureView() {
         view.backgroundColor = .white
-//        tableView.rowHeight = 60
-//        tableView.delegate = self
-//        tableView.dataSource = self
-//        textField.delegate = self
-//        tableView.register(MovieTableViewCell.self, forCellReuseIdentifier: MovieTableViewCell.identifier)
         submitbutton.addTarget(self, action: #selector(submitTapped), for: .touchUpInside)
     }
     
