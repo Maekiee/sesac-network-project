@@ -3,7 +3,6 @@ import SnapKit
 import Alamofire
 
 class LottoViewController: UIViewController {
-    
     let LottoEpisodeNumber: [Int] = Array(1...1181).reversed()
     
     var drwNumbers: [Int] = []
@@ -17,8 +16,11 @@ class LottoViewController: UIViewController {
         button.configuration = config
         return button
     }()
-    let pickerView: UIPickerView = {
+    lazy var pickerView: UIPickerView = {
         let pickerView = UIPickerView()
+        pickerView.delegate = self
+        pickerView.dataSource = self
+        pickerView.selectRow(1180, inComponent: 0, animated: false)
         return pickerView
     }()
     let toolBar: UIToolbar = {
@@ -28,13 +30,13 @@ class LottoViewController: UIViewController {
     }()
     lazy var textField: UITextField = {
         let textField = UITextField()
+        textField.text = "1181"
         textField.layer.cornerRadius = 8
         textField.borderStyle = .none
         textField.layer.borderColor = UIColor.gray.cgColor
         textField.layer.borderWidth = 1
         textField.inputView = pickerView
         textField.inputAccessoryView = toolBar
-
         return textField
     }()
     let guideLabel: UILabel = {
@@ -69,7 +71,6 @@ class LottoViewController: UIViewController {
         stackView.distribution = .equalCentering
         return stackView
     }()
-    
     let bonusLable: UILabel = {
         let label = UILabel()
         label.text = "보너스"
@@ -87,7 +88,7 @@ class LottoViewController: UIViewController {
         
         setupToolBar()
         popbutton.addTarget(self, action: #selector(pop), for: .touchUpInside)
-        getLottoInfo()
+        fetchLotto()
     
     }
     
@@ -124,12 +125,12 @@ class LottoViewController: UIViewController {
         }
     }
     
-    private func getLottoInfo(turningCount: String = "1181") {
+    private func fetchLotto(turningCount: String = "1181") {
         stackView.arrangedSubviews.forEach { view in
             stackView.removeArrangedSubview(view)
             view.removeFromSuperview()
-            drwNumbers = []
         }
+        drwNumbers = []
         let lottoApiUrl: String = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=\(turningCount)"
         
         AF.request(lottoApiUrl, method: .get)
@@ -186,16 +187,13 @@ extension LottoViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         titleLabel.text = "\(row+1) 당첨결과"
         textField.text = String(row+1) // 텍스트 필드에 보여질 회차 텍스트
         guard let turningCount = textField.text else { return }
-        getLottoInfo(turningCount: turningCount)
+        fetchLotto(turningCount: turningCount)
     }
     
     // 픽커뷰에 보여질 데이터
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return "\(row + 1) 회차"
     }
-    
-    
-  
 }
 
 
@@ -259,10 +257,6 @@ extension LottoViewController: ViewdesignProtocol {
     
     func configureView() {
         view.backgroundColor = .white
-        pickerView.delegate = self
-        pickerView.dataSource = self
-        pickerView.selectRow(1180, inComponent: 0, animated: false)
-        textField.text = "1181"
     }
     
     

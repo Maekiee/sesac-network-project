@@ -4,38 +4,40 @@ import SnapKit
 
 class ViewController: UIViewController {
     
-    let goLottobutton: UIButton = {
-        let button = UIButton()
-        var config = UIButton.Configuration.filled()
-        config.title = "Go Lotto"
-        config.baseBackgroundColor = .orange
-        config.baseForegroundColor = .white
-        button.configuration = config
+    let goLottobutton: BasicButton = {
+        let button = BasicButton(
+            title: "go Lotto"
+        )
         return button
     }()
-    
-    let goMovieButton: UIButton = {
-        let button = UIButton()
-        var config = UIButton.Configuration.filled()
-        config.title = "Go Movie"
-        config.baseBackgroundColor = .black
-        config.baseForegroundColor = .white
-        button.configuration = config
+    let goMovieButton: BasicButton = {
+        let button = BasicButton(
+            title: "Go Movie"
+        )
+        return button
+    }()
+    let goShoppingButton: BasicButton = {
+        let button = BasicButton(
+            title: "Go Shopping"
+        )
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .white
         configuUI()
         configLayout()
         
         goLottobutton.addTarget(self, action: #selector(goLottoScreen), for: .touchUpInside)
         goMovieButton.addTarget(self, action: #selector(goMovieScreen), for: .touchUpInside)
+        goShoppingButton.addTarget(self, action: #selector(goShoppingScreen), for: .touchUpInside)
     }
     
     func configuUI() {
         view.addSubview(goLottobutton)
         view.addSubview(goMovieButton)
+        view.addSubview(goShoppingButton)
     }
     
     func configLayout() {
@@ -51,6 +53,12 @@ class ViewController: UIViewController {
             make.height.equalTo(44)
             
         }
+        
+        goShoppingButton.snp.makeConstraints { make in
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.top.equalTo(goMovieButton.snp.bottom).offset(20)
+            make.height.equalTo(44)
+        }
     }
     
     @objc func goLottoScreen() {
@@ -65,7 +73,17 @@ class ViewController: UIViewController {
         let vc = MovieViewController()
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
+    }
+    
+    @objc func goShoppingScreen() {
+        print(#function)
         
+        let vc = ShoppingSearchViewController()
+        
+        navigationController?.pushViewController(vc, animated: true)
+        
+//        vc.modalPresentationStyle = .fullScreen
+//        present(vc, animated: true)
     }
 }
 

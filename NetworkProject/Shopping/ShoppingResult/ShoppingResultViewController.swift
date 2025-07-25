@@ -1,29 +1,37 @@
-//
-//  ShoppingResultViewController.swift
-//  NetworkProject
-//
-//  Created by 박도원 on 7/25/25.
-//
-
 import UIKit
 
 class ShoppingResultViewController: UIViewController {
+    var searchWord: String = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureHierarchy()
+        configureLayout()
+        configureView()
+    }
 
-        // Do any additional setup after loading the view.
+}
+
+
+
+extension ShoppingResultViewController: ViewdesignProtocol {
+    func configureHierarchy() {
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func configureLayout() {
     }
-    */
-
+    
+    func configureView() {
+        view.backgroundColor = .black
+        navigationItem.title = searchWord
+        if let navigationBar = self.navigationController?.navigationBar {
+            navigationBar.titleTextAttributes = [
+                NSAttributedString.Key.foregroundColor: UIColor.white,
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20)
+            ]
+        }
+        navigationController?.navigationBar.tintColor = .white
+    }
+    
+    
 }
