@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  NetworkProject
-//
-//  Created by 박도원 on 7/23/25.
-//
-
 import UIKit
 
 @main

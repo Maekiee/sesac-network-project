@@ -81,9 +81,6 @@ class ViewController: UIViewController {
         let vc = ShoppingSearchViewController()
         
         navigationController?.pushViewController(vc, animated: true)
-        
-//        vc.modalPresentationStyle = .fullScreen
-//        present(vc, animated: true)
     }
 }
 
