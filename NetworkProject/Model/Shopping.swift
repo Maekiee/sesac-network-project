@@ -1,6 +1,5 @@
 import Foundation
 
-
 struct ShoppingPage: Decodable {
     let total: Int
     let start: Int

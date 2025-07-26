@@ -11,12 +11,16 @@ enum ShoppingSortCase: String, CaseIterable {
 
 class ShoppingResultViewController: UIViewController {
     var searchWord: String = ""
-    
+    var items: [Product] = [] {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
     
     let searchTotalCountLabel: UILabel = {
         let label = UILabel()
         label.textColor = .systemGreen
-        label.text = "202020202"
+        label.text = "128391"
         label.font = .systemFont(ofSize: 14, weight: .semibold)
         return label
     }()
@@ -32,23 +36,76 @@ class ShoppingResultViewController: UIViewController {
         }
         return stackView
     }()
+    lazy var collectionView: UICollectionView = {
+        let layout = setCellLayout()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(ShoppingResultCollectionViewCell.self, forCellWithReuseIdentifier: ShoppingResultCollectionViewCell.identifier)
+        
+        return collectionView
+    }()
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         configureHierarchy()
         configureLayout()
         configureView()
     }
+    
+    private func fetchShoppingData() {
+        let url = "https://openapi.naver.com/v1/search/shop.json?query=옷&display=30"
+        AF.request(url, method: .get)
+            .responseDecodable(of: ShoppingPage.self) { res in
+                switch res.result {
+                case .success(let value):
+                    dump(value)
+                    self.items = value.items
+                case .failure(let error):
+                    print("에러: \(error)")
+                }
+            }
+    }
 
 }
 
 
+extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewLayoutProtocol {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 10
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingResultCollectionViewCell.identifier, for: indexPath) as! ShoppingResultCollectionViewCell
+//        let item = items[indexPath.row]
+//        cell.titleLabel.text = item.title
+//        cell.brandLabel.text = item.mallName
+//        cell.priceLabel.text = item.lprice
+        return cell
+    }
+    
+    func setCellLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        let deviceWidth = UIScreen.main.bounds.width
+        let cellWidth = (deviceWidth - 24) / 2
+        layout.itemSize = CGSize(width: cellWidth, height: cellWidth + (cellWidth / 2))
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 40, right: 8)
+        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 16
+        layout.scrollDirection = .vertical
+        return layout
+    }
+}
 
+
+//MARK: 프로토콜
 extension ShoppingResultViewController: ViewdesignProtocol {
+    
     func configureHierarchy() {
         view.addSubview(searchTotalCountLabel)
         view.addSubview(stackView)
+        view.addSubview(collectionView)
     }
     
     func configureLayout() {
@@ -60,6 +117,11 @@ extension ShoppingResultViewController: ViewdesignProtocol {
         stackView.snp.makeConstraints { make in
             make.top.equalTo(searchTotalCountLabel.snp.bottom).offset(8)
             make.leading.equalToSuperview().offset(8)
+        }
+        
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(stackView.snp.bottom).offset(8)
+            make.horizontalEdges.bottom.equalToSuperview()
         }
     }
     
@@ -73,6 +135,9 @@ extension ShoppingResultViewController: ViewdesignProtocol {
             ]
         }
         navigationController?.navigationBar.tintColor = .white
+        
+   
+        
     }
     
     

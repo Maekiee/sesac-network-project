@@ -10,12 +10,15 @@ class CategoryButton: UIButton {
     init (title: String) {
         super.init(frame: .zero)
         var config = UIButton.Configuration.filled()
-        config.title = title
+        var attributedTitle = AttributedString(title)
+        attributedTitle.font = .systemFont(ofSize: 13)
         config.baseBackgroundColor = .clear
         config.baseForegroundColor = .white
         config.background.cornerRadius = 8
         config.background.strokeColor = .white
         config.background.strokeWidth = 1
+        config.titleAlignment = .center
+        config.attributedTitle = attributedTitle
         self.configuration = config
     }
     
