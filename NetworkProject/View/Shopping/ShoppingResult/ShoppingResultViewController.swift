@@ -56,26 +56,15 @@ class ShoppingResultViewController: UIViewController {
         configureLayout()
         configureView()
         
-        fetchShoppingData()
-    }
-    
-    // 싱글톤으로 빼기
-    private func fetchShoppingData(sortCase: ShoppingSortCase = ShoppingSortCase.sim) {
-        let url = "https://openapi.naver.com/v1/search/shop.json?query=\(searchWord)&sort=\(sortCase)&display=30"
-        let header: HTTPHeaders = [
-            "X-Naver-Client-Id": "ev3bgbRZgCPjAqHmpFk_",
-            "X-Naver-Client-Secret": "QfglBffT1m"
-        ]
-        AF.request(url, method: .get, headers: header)
-            .responseDecodable(of: ShoppingPage.self) { res in
-                switch res.result {
-                case .success(let value):
-                    self.newItems = value.items.map { ProductViewModel(product: $0) }
-                    self.searchTotalCountLabel.text = self.formatNum(from: value.total)
-                case .failure(let error):
-                    print("에러: \(error)")
-                }
+        NetworkManager.shared.fetchShoppingData(searchWord: searchWord, sortCase: ShoppingSortCase.sim) { result in
+            switch result {
+            case .success(let shoppingPage):
+                self.newItems = shoppingPage.items.map { ProductViewModel(product: $0) }
+                self.searchTotalCountLabel.text = self.formatNum(from: shoppingPage.total)
+            case .failure(let error):
+                print("에러ㅓ에러: \(error)")
             }
+        }
     }
     
     private func formatNum(from: Int) -> String {
@@ -87,7 +76,15 @@ class ShoppingResultViewController: UIViewController {
     
     @objc private func sortReloadData(_ sender: UIButton) {
         guard let myButton = sender as? CategoryButton else { return }
-        fetchShoppingData(sortCase: myButton.buttonTag)
+        NetworkManager.shared.fetchShoppingData(searchWord: searchWord, sortCase: myButton.buttonTag) { result in
+            switch result {
+            case .success(let shoppingPage):
+                self.newItems = shoppingPage.items.map { ProductViewModel(product: $0) }
+                self.searchTotalCountLabel.text = self.formatNum(from: shoppingPage.total)
+            case .failure(let error):
+                print("에러ㅓ에러: \(error)")
+            }
+        }
     }
 
 }

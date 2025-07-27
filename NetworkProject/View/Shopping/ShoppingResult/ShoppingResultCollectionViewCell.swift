@@ -82,8 +82,6 @@ extension ShoppingResultCollectionViewCell: ViewdesignProtocol {
     }
     
     func configureView() {
-//        contentView.layer.borderColor = UIColor.red.cgColor
-//        contentView.layer.borderWidth = 1.0
     }
     
     
