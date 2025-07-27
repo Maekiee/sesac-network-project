@@ -11,16 +11,16 @@ enum ShoppingSortCase: String, CaseIterable {
 
 class ShoppingResultViewController: UIViewController {
     var searchWord: String = ""
-    var items: [Product] = []{
-        didSet {
-            collectionView.reloadData()
-        }
-    }
-//    var newItems: [ProductViewModel] = []{
+//    var items: [Product] = []{
 //        didSet {
 //            collectionView.reloadData()
 //        }
 //    }
+    var newItems: [ProductViewModel] = []{
+        didSet {
+            collectionView.reloadData()
+        }
+    }
     
     let searchTotalCountLabel: UILabel = {
         let label = UILabel()
@@ -73,7 +73,7 @@ class ShoppingResultViewController: UIViewController {
             .responseDecodable(of: ShoppingPage.self) { res in
                 switch res.result {
                 case .success(let value):
-                    self.items = value.items
+                    self.newItems = value.items.map { ProductViewModel(product: $0) }
                     self.searchTotalCountLabel.text = String(value.total)
                 case .failure(let error):
                     print("에러: \(error)")
@@ -88,16 +88,17 @@ class ShoppingResultViewController: UIViewController {
 
 }
 
-
+//MARK: 컬렉션 뷰
 extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewLayoutProtocol {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return items.count
+        return newItems.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingResultCollectionViewCell.identifier, for: indexPath) as! ShoppingResultCollectionViewCell
-        let item = items[indexPath.item]
+        let item = newItems[indexPath.item]
         cell.setCellItems(item: item)
+        
         return cell
     }
     
@@ -113,7 +114,6 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
         return layout
     }
 }
-
 
 //MARK: 프로토콜
 extension ShoppingResultViewController: ViewdesignProtocol {

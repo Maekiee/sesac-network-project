@@ -41,12 +41,11 @@ class ShoppingResultCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setCellItems(item: Product) {
-        let Url = URL(string: item.image)
-        imageView.kf.setImage(with: Url)
-        brandLabel.text = item.mallName
+    func setCellItems(item: ProductViewModel) {
+        imageView.kf.setImage(with: item.imageUrl)
+        brandLabel.text = item.brandName
         titleLabel.text = item.title
-        priceLabel.text = item.lprice
+        priceLabel.text = item.price
         
     }
     
