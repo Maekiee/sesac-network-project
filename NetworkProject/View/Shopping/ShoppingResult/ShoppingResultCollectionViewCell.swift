@@ -4,7 +4,7 @@ import Kingfisher
 
 class ShoppingResultCollectionViewCell: UICollectionViewCell {
     static let identifier: String = "ShoppingResultCollectionViewCell"
-    let deviceWidth = (UIScreen.main.bounds.width - 24) / 2
+    let cellHeight = (UIScreen.main.bounds.width - 24) / 2
     
     let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -62,7 +62,7 @@ extension ShoppingResultCollectionViewCell: ViewdesignProtocol {
     func configureLayout() {
         imageView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(deviceWidth)
+            make.height.equalTo(cellHeight)
         }
         
         brandLabel.snp.makeConstraints { make in

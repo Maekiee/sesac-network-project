@@ -2,6 +2,7 @@ import UIKit
 
 
 class CategoryButton: UIButton {
+    // ShoppingSortCase 말고 여러 열거형 값 받을 수 있게 변경
     var buttonTag = ShoppingSortCase.sim
     
     override init(frame: CGRect) {

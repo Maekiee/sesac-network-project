@@ -11,21 +11,17 @@ enum ShoppingSortCase: String, CaseIterable {
 
 class ShoppingResultViewController: UIViewController {
     var searchWord: String = ""
-//    var items: [Product] = []{
-//        didSet {
-//            collectionView.reloadData()
-//        }
-//    }
     var newItems: [ProductViewModel] = []{
         didSet {
             collectionView.reloadData()
         }
     }
     
+    // 넘버 폼새 사용 하기
     let searchTotalCountLabel: UILabel = {
         let label = UILabel()
         label.textColor = .systemGreen
-        label.text = "0000000"
+        label.text = ""
         label.font = .systemFont(ofSize: 14, weight: .semibold)
         return label
     }()
@@ -63,6 +59,7 @@ class ShoppingResultViewController: UIViewController {
         fetchShoppingData()
     }
     
+    // 싱글톤으로 빼기
     private func fetchShoppingData(sortCase: ShoppingSortCase = ShoppingSortCase.sim) {
         let url = "https://openapi.naver.com/v1/search/shop.json?query=\(searchWord)&sort=\(sortCase)&display=30"
         let header: HTTPHeaders = [
@@ -74,11 +71,18 @@ class ShoppingResultViewController: UIViewController {
                 switch res.result {
                 case .success(let value):
                     self.newItems = value.items.map { ProductViewModel(product: $0) }
-                    self.searchTotalCountLabel.text = String(value.total)
+                    self.searchTotalCountLabel.text = self.formatNum(from: value.total)
                 case .failure(let error):
                     print("에러: \(error)")
                 }
             }
+    }
+    
+    private func formatNum(from: Int) -> String {
+        let numFormatter = NumberFormatter()
+        numFormatter.numberStyle = .decimal
+        let formatText = numFormatter.string(from: NSNumber(value: from))!
+        return "\(formatText) 개의 검색 결과"
     }
     
     @objc private func sortReloadData(_ sender: UIButton) {
