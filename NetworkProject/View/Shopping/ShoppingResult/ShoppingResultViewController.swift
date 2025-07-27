@@ -11,11 +11,16 @@ enum ShoppingSortCase: String, CaseIterable {
 
 class ShoppingResultViewController: UIViewController {
     var searchWord: String = ""
-    var items: [Product] = [] {
+    var items: [Product] = []{
         didSet {
             collectionView.reloadData()
         }
     }
+//    var newItems: [ProductViewModel] = []{
+//        didSet {
+//            collectionView.reloadData()
+//        }
+//    }
     
     let searchTotalCountLabel: UILabel = {
         let label = UILabel()
@@ -52,16 +57,23 @@ class ShoppingResultViewController: UIViewController {
         configureHierarchy()
         configureLayout()
         configureView()
+        
+        fetchShoppingData()
     }
     
     private func fetchShoppingData() {
         let url = "https://openapi.naver.com/v1/search/shop.json?query=옷&display=30"
-        AF.request(url, method: .get)
+        let header: HTTPHeaders = [
+            "X-Naver-Client-Id": "ev3bgbRZgCPjAqHmpFk_",
+            "X-Naver-Client-Secret": "QfglBffT1m"
+        ]
+        AF.request(url, method: .get, headers: header)
             .responseDecodable(of: ShoppingPage.self) { res in
                 switch res.result {
                 case .success(let value):
-                    dump(value)
                     self.items = value.items
+                    self.searchWord = String(value.total)
+                    dump(self.items)
                 case .failure(let error):
                     print("에러: \(error)")
                 }
@@ -73,12 +85,13 @@ class ShoppingResultViewController: UIViewController {
 
 extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewLayoutProtocol {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return items.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingResultCollectionViewCell.identifier, for: indexPath) as! ShoppingResultCollectionViewCell
-//        let item = items[indexPath.row]
+        let item = items[indexPath.item]
+        cell.setCellItems(item: item)
 //        cell.titleLabel.text = item.title
 //        cell.brandLabel.text = item.mallName
 //        cell.priceLabel.text = item.lprice

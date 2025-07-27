@@ -1,5 +1,6 @@
 import UIKit
 import SnapKit
+import Kingfisher
 
 class ShoppingResultCollectionViewCell: UICollectionViewCell {
     static let identifier: String = "ShoppingResultCollectionViewCell"
@@ -8,6 +9,8 @@ class ShoppingResultCollectionViewCell: UICollectionViewCell {
     let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .blue
+        imageView.layer.cornerRadius = 8
+        imageView.clipsToBounds = true
         return imageView
     }()
     let brandLabel: UILabel = {
@@ -18,6 +21,7 @@ class ShoppingResultCollectionViewCell: UICollectionViewCell {
     let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
+        label.numberOfLines = 2
         return label
     }()
     let priceLabel: UILabel = {
@@ -35,6 +39,15 @@ class ShoppingResultCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setCellItems(item: Product) {
+        let Url = URL(string: item.image)
+        imageView.kf.setImage(with: Url)
+        brandLabel.text = item.mallName
+        titleLabel.text = item.title
+        priceLabel.text = item.lprice
+        
     }
     
 }
@@ -55,23 +68,23 @@ extension ShoppingResultCollectionViewCell: ViewdesignProtocol {
         
         brandLabel.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom).offset(4)
-            make.leading.equalToSuperview().inset(12)
+            make.leading.equalToSuperview().inset(8)
         }
         
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(brandLabel.snp.bottom).offset(4)
-            make.leading.equalToSuperview().inset(12)
+            make.horizontalEdges.equalToSuperview().inset(8)
         }
         
         priceLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
-            make.leading.equalToSuperview().inset(12)
+            make.leading.equalToSuperview().inset(8)
         }
     }
     
     func configureView() {
-        contentView.layer.borderColor = UIColor.red.cgColor
-        contentView.layer.borderWidth = 1.0
+//        contentView.layer.borderColor = UIColor.red.cgColor
+//        contentView.layer.borderWidth = 1.0
     }
     
     

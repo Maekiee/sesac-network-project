@@ -1,4 +1,6 @@
 import Foundation
+import Kingfisher
+
 
 struct ShoppingPage: Decodable {
     let total: Int
