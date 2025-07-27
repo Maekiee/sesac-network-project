@@ -3,8 +3,8 @@ import Alamofire
 import SnapKit
 
 enum ShoppingSortCase: String, CaseIterable {
-    case date = "날짜순"
     case sim = "정확도"
+    case date = "날짜순"
     case asc = "가격낮은순"
     case dsc = "가격높은순"
 }
@@ -25,7 +25,7 @@ class ShoppingResultViewController: UIViewController {
     let searchTotalCountLabel: UILabel = {
         let label = UILabel()
         label.textColor = .systemGreen
-        label.text = "128391"
+        label.text = "0000000"
         label.font = .systemFont(ofSize: 14, weight: .semibold)
         return label
     }()
@@ -35,8 +35,10 @@ class ShoppingResultViewController: UIViewController {
         stackView.spacing = 8
         ShoppingSortCase.allCases.forEach { item in
             let button = CategoryButton(
-                title: item.rawValue
+                title: item.rawValue,
+                caseTag: item
             )
+            button.addTarget(self, action: #selector(sortReloadData), for: .touchUpInside)
             stackView.addArrangedSubview(button)
         }
         return stackView
@@ -61,8 +63,8 @@ class ShoppingResultViewController: UIViewController {
         fetchShoppingData()
     }
     
-    private func fetchShoppingData() {
-        let url = "https://openapi.naver.com/v1/search/shop.json?query=옷&display=30"
+    private func fetchShoppingData(sortCase: ShoppingSortCase = ShoppingSortCase.sim) {
+        let url = "https://openapi.naver.com/v1/search/shop.json?query=\(searchWord)&sort=\(sortCase)&display=30"
         let header: HTTPHeaders = [
             "X-Naver-Client-Id": "ev3bgbRZgCPjAqHmpFk_",
             "X-Naver-Client-Secret": "QfglBffT1m"
@@ -72,12 +74,16 @@ class ShoppingResultViewController: UIViewController {
                 switch res.result {
                 case .success(let value):
                     self.items = value.items
-                    self.searchWord = String(value.total)
-                    dump(self.items)
+                    self.searchTotalCountLabel.text = String(value.total)
                 case .failure(let error):
                     print("에러: \(error)")
                 }
             }
+    }
+    
+    @objc private func sortReloadData(_ sender: UIButton) {
+        guard let myButton = sender as? CategoryButton else { return }
+        fetchShoppingData(sortCase: myButton.buttonTag)
     }
 
 }
@@ -145,7 +151,6 @@ extension ShoppingResultViewController: ViewdesignProtocol {
             ]
         }
         navigationController?.navigationBar.tintColor = .white
-        
    
         
     }

@@ -2,15 +2,17 @@ import UIKit
 
 
 class CategoryButton: UIButton {
+    var buttonTag = ShoppingSortCase.sim
     
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
     
-    init (title: String) {
+    init (title: String, caseTag: ShoppingSortCase = ShoppingSortCase.sim, backgroundColor: UIColor = UIColor.clear) {
         super.init(frame: .zero)
         var config = UIButton.Configuration.filled()
         var attributedTitle = AttributedString(title)
+        buttonTag = caseTag
         attributedTitle.font = .systemFont(ofSize: 13)
         config.baseBackgroundColor = .clear
         config.baseForegroundColor = .white

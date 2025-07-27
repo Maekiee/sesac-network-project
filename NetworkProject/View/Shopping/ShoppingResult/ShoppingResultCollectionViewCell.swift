@@ -8,7 +8,7 @@ class ShoppingResultCollectionViewCell: UICollectionViewCell {
     
     let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .blue
+        imageView.backgroundColor = .lightGray
         imageView.layer.cornerRadius = 20
         imageView.clipsToBounds = true
         return imageView
