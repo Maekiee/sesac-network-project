@@ -92,9 +92,6 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingResultCollectionViewCell.identifier, for: indexPath) as! ShoppingResultCollectionViewCell
         let item = items[indexPath.item]
         cell.setCellItems(item: item)
-//        cell.titleLabel.text = item.title
-//        cell.brandLabel.text = item.mallName
-//        cell.priceLabel.text = item.lprice
         return cell
     }
     

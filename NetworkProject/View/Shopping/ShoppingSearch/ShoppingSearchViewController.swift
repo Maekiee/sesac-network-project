@@ -41,7 +41,7 @@ extension ShoppingSearchViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         print(#function)
-        guard let text = searchBar.text, text.count > 2 else {
+        guard let text = searchBar.text, text.count > 1 else {
             print("빈값을 입력했어요 Alert 띄우기")
             return
         }
