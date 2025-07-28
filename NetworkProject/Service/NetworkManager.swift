@@ -6,8 +6,8 @@ class NetworkManager: NetworkProtocol {
     
     private init() { }
     
-    func fetchShoppingData(searchWord: String, sortCase: ShoppingSortCase, completion: @escaping (Result<ShoppingPage, Error>) -> Void) {
-        let url = "https://openapi.naver.com/v1/search/shop.json?query=\(searchWord)&sort=\(sortCase)&display=30"
+    func fetchShoppingData(searchWord: String, sortCase: ShoppingSortCase,count: Int = 1 ,completion: @escaping (Result<ShoppingPage, Error>) -> Void) {
+        let url = "https://openapi.naver.com/v1/search/shop.json?query=\(searchWord)&sort=\(sortCase)&start=\(count)&display=10"
         let header: HTTPHeaders = [
             "X-Naver-Client-Id": "ev3bgbRZgCPjAqHmpFk_",
             "X-Naver-Client-Secret": "QfglBffT1m"

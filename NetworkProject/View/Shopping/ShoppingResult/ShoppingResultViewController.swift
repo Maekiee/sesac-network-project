@@ -11,6 +11,7 @@ enum ShoppingSortCase: String, CaseIterable {
 
 class ShoppingResultViewController: UIViewController {
     var searchWord: String = ""
+    var listCount: Int = 1
     var newItems: [ProductViewModel] = []{
         didSet {
             collectionView.reloadData()
@@ -57,10 +58,12 @@ class ShoppingResultViewController: UIViewController {
         configureView()
         
         NetworkManager.shared.fetchShoppingData(searchWord: searchWord, sortCase: ShoppingSortCase.sim) { result in
+            print("뷰 디드 로드")
             switch result {
             case .success(let shoppingPage):
                 self.newItems = shoppingPage.items.map { ProductViewModel(product: $0) }
                 self.searchTotalCountLabel.text = self.formatNum(from: shoppingPage.total)
+                self.listCount = shoppingPage.items.count
             case .failure(let error):
                 print("에러ㅓ에러: \(error)")
             }
@@ -74,13 +77,16 @@ class ShoppingResultViewController: UIViewController {
         return "\(formatText) 개의 검색 결과"
     }
     
+    
     @objc private func sortReloadData(_ sender: UIButton) {
         guard let myButton = sender as? CategoryButton else { return }
         NetworkManager.shared.fetchShoppingData(searchWord: searchWord, sortCase: myButton.buttonTag) { result in
             switch result {
             case .success(let shoppingPage):
+                self.newItems.removeAll()
                 self.newItems = shoppingPage.items.map { ProductViewModel(product: $0) }
                 self.searchTotalCountLabel.text = self.formatNum(from: shoppingPage.total)
+                self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
             case .failure(let error):
                 print("에러ㅓ에러: \(error)")
             }
@@ -113,6 +119,22 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
         layout.minimumLineSpacing = 16
         layout.scrollDirection = .vertical
         return layout
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row == (newItems.count - 3) {
+            listCount = newItems.count + 1
+            NetworkManager.shared.fetchShoppingData(searchWord: searchWord, sortCase: ShoppingSortCase.sim, count: listCount) { result in
+                switch result {
+                case .success(let shoppingPage):
+                    self.newItems.append(contentsOf: shoppingPage.items.map { ProductViewModel(product: $0)})
+                    self.searchTotalCountLabel.text = self.formatNum(from: shoppingPage.total)
+                    
+                case .failure(let error):
+                    print("에러: \(error)")
+                }
+            }
+        }
     }
 }
 
