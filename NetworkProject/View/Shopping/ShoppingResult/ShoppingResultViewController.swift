@@ -17,6 +17,7 @@ class ShoppingResultViewController: UIViewController {
             collectionView.reloadData()
         }
     }
+    var totalCount: Int = 0
     
     // 넘버 폼새 사용 하기
     let searchTotalCountLabel: UILabel = {
@@ -62,8 +63,10 @@ class ShoppingResultViewController: UIViewController {
             switch result {
             case .success(let shoppingPage):
                 self.newItems = shoppingPage.items.map { ProductViewModel(product: $0) }
-                self.searchTotalCountLabel.text = self.formatNum(from: shoppingPage.total)
+                self.searchTotalCountLabel.text = "\(shoppingPage.total.formatted()) 개의 검색 결과"
+//                self.formatNum(from: shoppingPage.total)
                 self.listCount = shoppingPage.items.count
+                self.totalCount = shoppingPage.total
             case .failure(let error):
                 print("에러ㅓ에러: \(error)")
             }
@@ -78,6 +81,7 @@ class ShoppingResultViewController: UIViewController {
     }
     
     
+    // 필터 버튼
     @objc private func sortReloadData(_ sender: UIButton) {
         guard let myButton = sender as? CategoryButton else { return }
         NetworkManager.shared.fetchShoppingData(searchWord: searchWord, sortCase: myButton.buttonTag) { result in
@@ -85,7 +89,8 @@ class ShoppingResultViewController: UIViewController {
             case .success(let shoppingPage):
                 self.newItems.removeAll()
                 self.newItems = shoppingPage.items.map { ProductViewModel(product: $0) }
-                self.searchTotalCountLabel.text = self.formatNum(from: shoppingPage.total)
+                self.searchTotalCountLabel.text = "\(shoppingPage.total.formatted()) 개의 검색 결과"
+//                self.formatNum(from: shoppingPage.total)
                 self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
             case .failure(let error):
                 print("에러ㅓ에러: \(error)")
@@ -121,8 +126,10 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
         return layout
     }
     
+    
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.row == (newItems.count - 3) {
+        // 페이지네이션
+        if indexPath.row == (newItems.count - 3) && newItems.count < totalCount{
             listCount = newItems.count + 1
             NetworkManager.shared.fetchShoppingData(searchWord: searchWord, sortCase: ShoppingSortCase.sim, count: listCount) { result in
                 switch result {
