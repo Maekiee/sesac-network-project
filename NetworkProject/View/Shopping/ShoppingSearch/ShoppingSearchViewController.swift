@@ -35,6 +35,14 @@ class ShoppingSearchViewController: UIViewController {
         
     }
     
+    func showAlert(tip message: String) {
+        let alertController = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+        alertController.addAction(alertAction)
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    
 }
 
 extension ShoppingSearchViewController: UISearchBarDelegate {
@@ -42,13 +50,15 @@ extension ShoppingSearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         print(#function)
         guard let text = searchBar.text, text.count > 1 else {
-            print("빈값을 입력했어요 Alert 띄우기")
+            showAlert(tip: "2글자 이상 입력해 주세요")
+            
             return
         }
         let vc = ShoppingResultViewController()
         vc.searchWord = text
         navigationController?.pushViewController(vc, animated: true)
         view.endEditing(true)
+        searchBar.text = ""
     }
 }
 

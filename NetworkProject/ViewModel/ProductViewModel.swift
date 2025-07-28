@@ -13,6 +13,5 @@ struct ProductViewModel{
         self.title = product.title.removeHtml
         self.price = NumberFormat.shared.formatStringToNum(stringFrom: product.lprice)
     }
-
 }
 
