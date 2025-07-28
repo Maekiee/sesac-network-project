@@ -59,12 +59,10 @@ class ShoppingResultViewController: UIViewController {
         configureView()
         
         NetworkManager.shared.fetchShoppingData(searchWord: searchWord, sortCase: ShoppingSortCase.sim) { result in
-            print("뷰 디드 로드")
             switch result {
             case .success(let shoppingPage):
                 self.newItems = shoppingPage.items.map { ProductViewModel(product: $0) }
-                self.searchTotalCountLabel.text = "\(shoppingPage.total.formatted()) 개의 검색 결과"
-//                self.formatNum(from: shoppingPage.total)
+                self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: shoppingPage.total)) 개의 검색 결과"
                 self.listCount = shoppingPage.items.count
                 self.totalCount = shoppingPage.total
             case .failure(let error):
@@ -73,12 +71,6 @@ class ShoppingResultViewController: UIViewController {
         }
     }
     
-    private func formatNum(from: Int) -> String {
-        let numFormatter = NumberFormatter()
-        numFormatter.numberStyle = .decimal
-        let formatText = numFormatter.string(from: NSNumber(value: from))!
-        return "\(formatText) 개의 검색 결과"
-    }
     
     
     // 필터 버튼
@@ -90,7 +82,6 @@ class ShoppingResultViewController: UIViewController {
                 self.newItems.removeAll()
                 self.newItems = shoppingPage.items.map { ProductViewModel(product: $0) }
                 self.searchTotalCountLabel.text = "\(shoppingPage.total.formatted()) 개의 검색 결과"
-//                self.formatNum(from: shoppingPage.total)
                 self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
             case .failure(let error):
                 print("에러ㅓ에러: \(error)")
@@ -135,8 +126,7 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
                 switch result {
                 case .success(let shoppingPage):
                     self.newItems.append(contentsOf: shoppingPage.items.map { ProductViewModel(product: $0)})
-                    self.searchTotalCountLabel.text = self.formatNum(from: shoppingPage.total)
-                    
+                    self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: shoppingPage.total)) 개의 검색 결과"
                 case .failure(let error):
                     print("에러: \(error)")
                 }
