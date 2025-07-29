@@ -7,6 +7,7 @@ struct ProductViewModel{
     let title: String
     let price: String
     
+    
     init(product: Product) {
         self.imageUrl = URL(string: product.image)!
         self.brandName = product.mallName

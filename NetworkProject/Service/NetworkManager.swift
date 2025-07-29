@@ -1,13 +1,17 @@
 import Foundation
 import Alamofire
 class NetworkManager: NetworkProtocol {
-    
     static let shared = NetworkManager()
     
     private init() { }
     
-    func fetchShoppingData(searchWord: String, sortCase: ShoppingSortCase,count: Int = 1 ,completion: @escaping (Result<ShoppingPage, Error>) -> Void) {
-        let url = "https://openapi.naver.com/v1/search/shop.json?query=\(searchWord)&sort=\(sortCase)&start=\(count)&display=10"
+    
+    func getShoppingData(searchWord: String,
+                         sortCase: ShoppingSortCase,
+                         count: Int = 1,
+                         completion: @escaping (ShoppingPage) -> Void,
+                         errorHandler: @escaping (any Error) -> Void) {
+        let url = "https://openapi.naver.com/v1/search/shop.json?query=\(searchWord)&sort=\(sortCase)&start=\(count)&display=30"
         let header: HTTPHeaders = [
             "X-Naver-Client-Id": "ev3bgbRZgCPjAqHmpFk_",
             "X-Naver-Client-Secret": "QfglBffT1m"
@@ -16,12 +20,12 @@ class NetworkManager: NetworkProtocol {
             .responseDecodable(of: ShoppingPage.self) { res in
                 switch res.result {
                 case .success(let value):
-                    completion(.success(value))
+                    completion(value)
                 case .failure(let error):
-                    print("에러: \(error)")
-                    completion(.failure(error))
+                    errorHandler(error)
                 }
             }
+        
     }
     
 }

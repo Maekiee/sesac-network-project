@@ -12,7 +12,9 @@ enum ShoppingSortCase: String, CaseIterable {
 class ShoppingResultViewController: UIViewController {
     var searchWord: String = ""
     var listCount: Int = 1
-    var newItems: [ProductViewModel] = []{
+    var aaaList: [Product] = []
+    var currentCategory = ShoppingSortCase.sim
+    var newItems: [ProductViewModel] = [] {
         didSet {
             collectionView.reloadData()
         }
@@ -58,16 +60,13 @@ class ShoppingResultViewController: UIViewController {
         configureLayout()
         configureView()
         
-        NetworkManager.shared.fetchShoppingData(searchWord: searchWord, sortCase: ShoppingSortCase.sim) { result in
-            switch result {
-            case .success(let shoppingPage):
-                self.newItems = shoppingPage.items.map { ProductViewModel(product: $0) }
-                self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: shoppingPage.total)) 개의 검색 결과"
-                self.listCount = shoppingPage.items.count
-                self.totalCount = shoppingPage.total
-            case .failure(let error):
-                print("에러ㅓ에러: \(error)")
-            }
+        NetworkManager.shared.getShoppingData(searchWord: searchWord, sortCase: currentCategory) { value in
+            self.newItems = value.items.map { ProductViewModel(product: $0) }
+            self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: value.total)) 개의 검색 결과"
+            self.listCount = value.items.count
+            self.totalCount = value.total
+        } errorHandler: { error in
+            print("dpfjjfj: \(error)")
         }
     }
     
@@ -76,17 +75,16 @@ class ShoppingResultViewController: UIViewController {
     // 필터 버튼
     @objc private func sortReloadData(_ sender: UIButton) {
         guard let myButton = sender as? CategoryButton else { return }
-        NetworkManager.shared.fetchShoppingData(searchWord: searchWord, sortCase: myButton.buttonTag) { result in
-            switch result {
-            case .success(let shoppingPage):
-                self.newItems.removeAll()
-                self.newItems = shoppingPage.items.map { ProductViewModel(product: $0) }
-                self.searchTotalCountLabel.text = "\(shoppingPage.total.formatted()) 개의 검색 결과"
-                self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-            case .failure(let error):
-                print("에러ㅓ에러: \(error)")
-            }
+        currentCategory = myButton.buttonTag
+        NetworkManager.shared.getShoppingData(searchWord: searchWord, sortCase: currentCategory) { resultValue in
+            self.newItems.removeAll()
+                            self.newItems = resultValue.items.map { ProductViewModel(product: $0) }
+                            self.searchTotalCountLabel.text = "\(resultValue.total.formatted()) 개의 검색 결과"
+                            self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        } errorHandler: { error in
+            print(error)
         }
+        
     }
 
 }
@@ -120,16 +118,14 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         // 페이지네이션
-        if indexPath.row == (newItems.count - 3) && newItems.count < totalCount{
+        if indexPath.item == (newItems.count - 3) && newItems.count < totalCount {
             listCount = newItems.count + 1
-            NetworkManager.shared.fetchShoppingData(searchWord: searchWord, sortCase: ShoppingSortCase.sim, count: listCount) { result in
-                switch result {
-                case .success(let shoppingPage):
-                    self.newItems.append(contentsOf: shoppingPage.items.map { ProductViewModel(product: $0)})
-                    self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: shoppingPage.total)) 개의 검색 결과"
-                case .failure(let error):
-                    print("에러: \(error)")
-                }
+            
+            NetworkManager.shared.getShoppingData(searchWord: searchWord, sortCase: currentCategory, count: listCount) { reslutValue in
+                self.newItems.append(contentsOf: reslutValue.items.map { ProductViewModel(product: $0)} )
+                self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: reslutValue.total)) 개의 검색 결과"
+            } errorHandler: { error in
+                print("에러: \(error)")
             }
         }
     }
