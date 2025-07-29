@@ -12,11 +12,15 @@ enum ShoppingSortCase: String, CaseIterable {
 class ShoppingResultViewController: UIViewController {
     var searchWord: String = ""
     var listCount: Int = 1
-    var aaaList: [Product] = []
     var currentCategory = ShoppingSortCase.sim
     var newItems: [ProductViewModel] = [] {
         didSet {
             collectionView.reloadData()
+        }
+    }
+    var recommendList: [RecommendProductModel] = [] {
+        didSet {
+            recommendCollectionView.reloadData()
         }
     }
     var totalCount: Int = 0
@@ -53,6 +57,18 @@ class ShoppingResultViewController: UIViewController {
         
         return collectionView
     }()
+    lazy var recommendCollectionView: UICollectionView = {
+        let layout = setHorizonCellLayout()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(RecommendCollectionViewCell.self, forCellWithReuseIdentifier: RecommendCollectionViewCell.identifier)
+        
+        return collectionView
+    }()
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,9 +82,16 @@ class ShoppingResultViewController: UIViewController {
             self.listCount = value.items.count
             self.totalCount = value.total
         } errorHandler: { error in
-            
             self.showAlert(tip: "네트워크 에러")
         }
+        
+        // 추천 상품
+        NetworkManager.shared.getRecommandShoppingData { value in
+            self.recommendList = value.items.map { RecommendProductModel(product: $0) }
+        } errorHandler: { error in
+            self.showAlert(tip: "네트워크 에러")
+        }
+
     }
     
     
@@ -93,27 +116,28 @@ class ShoppingResultViewController: UIViewController {
 //MARK: 컬렉션 뷰
 extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewLayoutProtocol {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return newItems.count
+        if collectionView == recommendCollectionView {
+            return recommendList.count
+        } else {
+            return newItems.count
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingResultCollectionViewCell.identifier, for: indexPath) as! ShoppingResultCollectionViewCell
-        let item = newItems[indexPath.item]
-        cell.setCellItems(item: item)
-        
-        return cell
-    }
-    
-    func setCellLayout() -> UICollectionViewFlowLayout {
-        let layout = UICollectionViewFlowLayout()
-        let deviceWidth = UIScreen.main.bounds.width
-        let cellWidth = (deviceWidth - 24) / 2
-        layout.itemSize = CGSize(width: cellWidth, height: cellWidth + (cellWidth / 2))
-        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 40, right: 8)
-        layout.minimumInteritemSpacing = 8
-        layout.minimumLineSpacing = 16
-        layout.scrollDirection = .vertical
-        return layout
+        if collectionView == recommendCollectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecommendCollectionViewCell.identifier, for: indexPath) as! RecommendCollectionViewCell
+            let item = recommendList[indexPath.item]
+            cell.setCellItems(item: item)
+            
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingResultCollectionViewCell.identifier, for: indexPath) as! ShoppingResultCollectionViewCell
+            let item = newItems[indexPath.item]
+            cell.setCellItems(item: item)
+            
+            return cell
+        }
     }
     
     
@@ -130,6 +154,29 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
             }
         }
     }
+    
+    //MARK: - 셀 크기
+    func setCellLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        let deviceWidth = UIScreen.main.bounds.width
+        let cellWidth = (deviceWidth - 24) / 2
+        layout.itemSize = CGSize(width: cellWidth, height: cellWidth + (cellWidth / 2))
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 40, right: 8)
+        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 16
+        layout.scrollDirection = .vertical
+        return layout
+    }
+    
+    func setHorizonCellLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 100, height: 100)
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 20)
+        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = 10
+        layout.scrollDirection = .horizontal
+        return layout
+    }
 }
 
 //MARK: 프로토콜
@@ -138,6 +185,7 @@ extension ShoppingResultViewController: ViewdesignProtocol {
     func configureHierarchy() {
         view.addSubview(searchTotalCountLabel)
         view.addSubview(stackView)
+        view.addSubview(recommendCollectionView)
         view.addSubview(collectionView)
     }
     
@@ -152,8 +200,14 @@ extension ShoppingResultViewController: ViewdesignProtocol {
             make.leading.equalToSuperview().offset(8)
         }
         
-        collectionView.snp.makeConstraints { make in
+        recommendCollectionView.snp.makeConstraints { make in
             make.top.equalTo(stackView.snp.bottom).offset(8)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(120)
+        }
+        
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(recommendCollectionView.snp.bottom).offset(8)
             make.horizontalEdges.bottom.equalToSuperview()
         }
     }
