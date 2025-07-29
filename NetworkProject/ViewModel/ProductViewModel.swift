@@ -15,4 +15,3 @@ struct ProductViewModel{
         self.price = NumberFormat.shared.formatStringToNum(stringFrom: product.lprice)
     }
 }
-

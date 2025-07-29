@@ -21,7 +21,7 @@ class NetworkManager: NetworkProtocol {
                 switch res.result {
                 case .success(let value):
                     completion(value)
-                case .failure(let error):
+                case .failure(let error): //400 {}
                     errorHandler(error)
                 }
             }

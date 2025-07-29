@@ -66,7 +66,8 @@ class ShoppingResultViewController: UIViewController {
             self.listCount = value.items.count
             self.totalCount = value.total
         } errorHandler: { error in
-            print("dpfjjfj: \(error)")
+            
+            self.showAlert(tip: "네트워크 에러")
         }
     }
     
@@ -82,7 +83,7 @@ class ShoppingResultViewController: UIViewController {
                             self.searchTotalCountLabel.text = "\(resultValue.total.formatted()) 개의 검색 결과"
                             self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         } errorHandler: { error in
-            print(error)
+            self.showAlert(tip: "네트워크 에러")
         }
         
     }
@@ -125,7 +126,7 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
                 self.newItems.append(contentsOf: reslutValue.items.map { ProductViewModel(product: $0)} )
                 self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: reslutValue.total)) 개의 검색 결과"
             } errorHandler: { error in
-                print("에러: \(error)")
+                self.showAlert(tip: "네트워크 에러")
             }
         }
     }
