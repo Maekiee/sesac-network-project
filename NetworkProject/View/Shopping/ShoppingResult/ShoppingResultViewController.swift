@@ -97,10 +97,15 @@ class ShoppingResultViewController: UIViewController {
 
         
         // 추천 상품
-        NetworkManager.shared.getRecommandShoppingData { value in
-            self.recommendList = value.items.map { RecommendProductModel(product: $0) }
-        } errorHandler: { error in
-            self.showAlert(tip: "네트워크 에러")
+        NetworkManager.shared.getRecommandShoppingData { resultValue in
+            switch resultValue {
+            case .success(let value):
+                self.recommendList = value.items.map { RecommendProductModel(product: $0) }
+            case .failure(let error):
+                self.showAlert(tip: "네트워크 에러")
+                print("에러입니다.: \(error)")
+            }
+            
         }
 
     }
