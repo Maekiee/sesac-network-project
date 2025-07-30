@@ -1,8 +1,9 @@
 import Foundation
 import Alamofire
+
 class NetworkManager: NetworkProtocol {
     static let shared = NetworkManager()
-    
+
     private init() { }
     
     
@@ -44,7 +45,6 @@ class NetworkManager: NetworkProtocol {
                     errorHandler(error)
                 }
             }
-        
     }
     
 }
