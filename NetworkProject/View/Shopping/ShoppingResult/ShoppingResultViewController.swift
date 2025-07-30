@@ -81,14 +81,20 @@ class ShoppingResultViewController: UIViewController {
         configureLayout()
         configureView()
         
-        NetworkManager.shared.getShoppingData(searchWord: searchWord, sortCase: currentCategory) { value in
-            self.newItems = value.items.map { ProductViewModel(product: $0) }
-            self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: value.total)) 개의 검색 결과"
-            self.listCount = value.items.count
-            self.totalCount = value.total
-        } errorHandler: { error in
-            self.showAlert(tip: "네트워크 에러")
+        
+        NetworkManager.shared.getShoppingData(searchWord: searchWord, sortCase: currentCategory) { resultValue in
+            switch resultValue {
+            case .success(let value):
+                self.newItems = value.items.map { ProductViewModel(product: $0) }
+                self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: value.total)) 개의 검색 결과"
+                self.listCount = value.items.count
+                self.totalCount = value.total
+            case .failure(let error):
+                self.showAlert(tip: "에러에러")
+                print("에러입니다.: \(error)")
+            }
         }
+
         
         // 추천 상품
         NetworkManager.shared.getRecommandShoppingData { value in
@@ -107,13 +113,16 @@ class ShoppingResultViewController: UIViewController {
         if myButton.buttonTag != currentCategory {
             currentCategory = myButton.buttonTag
             NetworkManager.shared.getShoppingData(searchWord: searchWord, sortCase: currentCategory) { resultValue in
-                print("네트워크 실행")
-                self.newItems.removeAll()
-                self.newItems = resultValue.items.map { ProductViewModel(product: $0) }
-                self.searchTotalCountLabel.text = "\(resultValue.total.formatted()) 개의 검색 결과"
-                self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-            } errorHandler: { error in
-                self.showAlert(tip: "네트워크 에러")
+                switch resultValue {
+                case .success(let value):
+                    self.newItems = value.items.map { ProductViewModel(product: $0) }
+                    self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: value.total)) 개의 검색 결과"
+                    self.listCount = value.items.count
+                    self.totalCount = value.total
+                case .failure(let error):
+                    self.showAlert(tip: "에러에러")
+                    print("에러입니다.: \(error)")
+                }
             }
         }
        
@@ -153,11 +162,15 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
         // 페이지네이션
         if indexPath.item == (newItems.count - 3) && newItems.count < totalCount {
             listCount = newItems.count + 1
-            NetworkManager.shared.getShoppingData(searchWord: searchWord, sortCase: currentCategory, count: listCount) { reslutValue in
-                self.newItems.append(contentsOf: reslutValue.items.map { ProductViewModel(product: $0)} )
-                self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: reslutValue.total)) 개의 검색 결과"
-            } errorHandler: { error in
-                self.showAlert(tip: "네트워크 에러")
+            NetworkManager.shared.getShoppingData(searchWord: searchWord, sortCase: currentCategory, count: listCount) { resultValue in
+                switch resultValue {
+                case .success(let value):
+                    self.newItems.append(contentsOf: value.items.map { ProductViewModel(product: $0)} )
+                    self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: value.total)) 개의 검색 결과"
+                case .failure(let error):
+                    self.showAlert(tip: "에러에러")
+                    print("에러입니다.: \(error)")
+                }
             }
         }
     }
