@@ -44,7 +44,7 @@ class ShoppingResultCollectionViewCell: UICollectionViewCell {
     func setCellItems(item: Product) {
         imageView.kf.setImage(with: item.imageURL)
         brandLabel.text = item.mallName
-        titleLabel.text = item.title
+        titleLabel.text = item.pureTitle
         priceLabel.text = item.price
         
     }

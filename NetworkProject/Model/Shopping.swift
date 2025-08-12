@@ -15,6 +15,10 @@ struct Product: Decodable {
     let title: String
     let lprice: String
     
+    
+    var pureTitle: String {
+        title.removeHtml
+    }
     var imageURL: URL {
         URL(string: image)!
     }

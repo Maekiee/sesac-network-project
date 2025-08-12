@@ -47,8 +47,6 @@ class ShoppingSearchViewController: UIViewController {
 extension ShoppingSearchViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        print(#function)
-        
         viewModel.inputSearchText.value = searchBar.text
         
         let vc = ShoppingResultViewController()
