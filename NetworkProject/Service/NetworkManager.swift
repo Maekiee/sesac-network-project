@@ -13,7 +13,7 @@ class NetworkManager: NetworkProtocol {
                          count: Int = 1,
                          completion: @escaping (Result<ShoppingPage, Error>) -> Void
     ) {
-        let url = "https://openapi.naver.com/v1/search/shop.json?query=\(searchWord)&sort=\(sortCase)&start=\(count)&display=30"
+        let url = "https://openapi.naver.com/v1/search/shop.json?query=\(searchWord)&sort=\(sortCase)&start=\(count)&display=100"
         let header: HTTPHeaders = [
             "X-Naver-Client-Id": APIKey.naverId,
             "X-Naver-Client-Secret": APIKey.naverSecret

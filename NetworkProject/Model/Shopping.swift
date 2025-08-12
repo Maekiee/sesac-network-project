@@ -14,4 +14,11 @@ struct Product: Decodable {
     let mallName: String
     let title: String
     let lprice: String
+    
+    var imageURL: URL {
+        URL(string: image)!
+    }
+    var price: String {
+        NumberFormat.shared.formatStringToNum(stringFrom: lprice)
+    }
 }

@@ -17,6 +17,8 @@ struct ProductViewModel{
 }
 
 
+
+
 struct RecommendProductModel{
     let imageUrl: URL
 //    let brandName: String
