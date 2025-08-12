@@ -181,17 +181,17 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
     }
     
     //MARK: - 셀 크기
-    func setCellLayout() -> UICollectionViewFlowLayout {
-        let layout = UICollectionViewFlowLayout()
-        let deviceWidth = UIScreen.main.bounds.width
-        let cellWidth = (deviceWidth - 24) / 2
-        layout.itemSize = CGSize(width: cellWidth, height: cellWidth + (cellWidth / 2))
-        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 40, right: 8)
-        layout.minimumInteritemSpacing = 8
-        layout.minimumLineSpacing = 16
-        layout.scrollDirection = .vertical
-        return layout
-    }
+        func setCellLayout() -> UICollectionViewFlowLayout {
+            let layout = UICollectionViewFlowLayout()
+            let deviceWidth = UIScreen.main.bounds.width
+            let cellWidth = (deviceWidth - 24) / 2
+            layout.itemSize = CGSize(width: cellWidth, height: cellWidth + (cellWidth / 2))
+            layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 40, right: 8)
+            layout.minimumInteritemSpacing = 8
+            layout.minimumLineSpacing = 16
+            layout.scrollDirection = .vertical
+            return layout
+        }
     
     func setHorizonCellLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()

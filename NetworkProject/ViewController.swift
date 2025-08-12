@@ -26,6 +26,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        print("뷰컨 로드됨'")
         configuUI()
         configLayout()
         
@@ -79,7 +80,6 @@ class ViewController: UIViewController {
         print(#function)
         
         let vc = ShoppingSearchViewController()
-        
         navigationController?.pushViewController(vc, animated: true)
     }
 }
