@@ -3,13 +3,13 @@ import UIKit
 
 class CategoryButton: UIButton {
     // ShoppingSortCase 말고 여러 열거형 값 받을 수 있게 변경
-    var buttonTag = ShoppingSortCase.sim
+    var buttonTag = ShoppingFilterType.sim
     
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
     
-    init (title: String, caseTag: ShoppingSortCase = ShoppingSortCase.sim, backgroundColor: UIColor = UIColor.clear) {
+    init (title: String, caseTag: ShoppingFilterType = ShoppingFilterType.sim, backgroundColor: UIColor = UIColor.clear) {
         super.init(frame: .zero)
         var config = UIButton.Configuration.filled()
         var attributedTitle = AttributedString(title)

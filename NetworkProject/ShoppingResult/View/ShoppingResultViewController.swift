@@ -2,7 +2,7 @@ import UIKit
 import Alamofire
 import SnapKit
 
-enum ShoppingSortCase: String, CaseIterable {
+enum ShoppingFilterType: String, CaseIterable {
     case sim = "정확도"
     case date = "날짜순"
     case asc = "가격낮은순"
@@ -23,7 +23,7 @@ class ShoppingResultViewController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 8
-        ShoppingSortCase.allCases.forEach { item in
+        ShoppingFilterType.allCases.forEach { item in
             let button = CategoryButton(
                 title: item.rawValue,
                 caseTag: item
@@ -79,6 +79,7 @@ class ShoppingResultViewController: UIViewController {
 
 //MARK: 컬렉션 뷰
 extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewLayoutProtocol {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.output.productList.value.count
     }
@@ -86,8 +87,8 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingResultCollectionViewCell.identifier, for: indexPath) as! ShoppingResultCollectionViewCell
         let item = viewModel.output.productList.value[indexPath.item]
-        cell.setCellItems(item: item)
         
+        cell.setCellItems(item: item)
         return cell
     }
     

@@ -7,6 +7,10 @@ struct ShoppingPage: Decodable {
     let start: Int
     let display: Int
     let items: [Product]
+    
+    var convertTotal: String {
+        NumberFormat.shared.formatNum(from: total)
+    }
 }
 
 struct Product: Decodable {
