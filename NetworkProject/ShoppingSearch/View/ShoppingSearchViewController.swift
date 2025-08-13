@@ -35,11 +35,9 @@ class ShoppingSearchViewController: UIViewController {
         configureLayout()
         configureView()
         
-        viewModel.isShow.bind { [weak self] value in
+        viewModel.output.alertTripper.lazyBind { [weak self] value in
             guard let self = self else { return }
-            if value {
-                showAlert(tip: "2글자 이상 입력해 주세요")
-            }
+            showAlert(tip: "2글자 이상 입력해 주세요")
         }
     }
 }
@@ -47,10 +45,10 @@ class ShoppingSearchViewController: UIViewController {
 extension ShoppingSearchViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        viewModel.inputSearchText.value = searchBar.text
+        viewModel.input.searchText.value = searchBar.text
         
         let vc = ShoppingResultViewController()
-        vc.viewModel.outputSearchWord.value = viewModel.outputSearchText.value
+        vc.viewModel.output.searchWord.value = viewModel.output.searchText.value
         navigationController?.pushViewController(vc, animated: true)
         view.endEditing(true)
         searchBar.text = ""

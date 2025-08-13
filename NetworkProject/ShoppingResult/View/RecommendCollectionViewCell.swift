@@ -25,9 +25,9 @@ class RecommendCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setCellItems(item: RecommendProductModel) {
-        imageView.kf.setImage(with: item.imageUrl)
-    }
+//    func setCellItems(item: RecommendProductModel) {
+//        imageView.kf.setImage(with: item.imageUrl)
+//    }
     
 }
 

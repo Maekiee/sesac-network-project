@@ -1,20 +1,33 @@
 import Foundation
 
 class ShoppingSearchViewModel {
+    var input: Input
+    var output: Output
     
-    var inputSearchText: Observable<String?> = Observable(nil)
-    var outputSearchText: Observable<String> = Observable("")
-    var isShow: Observable<Bool> = Observable(false)
+    
+    struct Input {
+        var searchText: Observable<String?> = Observable(nil)
+    }
+    
+    struct Output {
+        var alertTripper: Observable<Void> = Observable(())
+        var searchText: Observable<String> = Observable("")
+    }
+    
+    
+    
     
     init() {
+        input = Input()
+        output = Output()
         
-        inputSearchText.bind { [weak self] value in
+        input.searchText.bind { [weak self] value in
             guard let self = self else { return }
             guard let searchWord = value else { return }
             if searchWord.count < 2 {
-                isShow.value = true
+                output.alertTripper.value = ()
             } else {
-                outputSearchText.value = searchWord
+                output.searchText.value = searchWord
             }
         }
         

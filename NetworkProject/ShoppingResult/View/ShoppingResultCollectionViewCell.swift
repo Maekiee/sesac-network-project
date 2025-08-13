@@ -46,7 +46,6 @@ class ShoppingResultCollectionViewCell: UICollectionViewCell {
         brandLabel.text = item.mallName
         titleLabel.text = item.pureTitle
         priceLabel.text = item.price
-        
     }
     
 }

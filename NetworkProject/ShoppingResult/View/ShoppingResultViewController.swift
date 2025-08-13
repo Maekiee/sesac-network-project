@@ -50,17 +50,17 @@ class ShoppingResultViewController: UIViewController {
         configureLayout()
         configureView()
         
-        viewModel.inputDidLoadTrigger.value = ()
+        viewModel.input.didLoadTrigger.value = ()
         
-        viewModel.outputProductList.lazyBind { [weak self] value in
+        viewModel.output.productList.lazyBind { [weak self] value in
             guard let self = self else { return }
             collectionView.reloadData()
             print("값 바뀜")
         }
         
-        viewModel.outputTotalcountText.bind { [weak self] value in
+        viewModel.output.totalCountText.bind { [weak self] value in
             guard let self = self else { return }
-            totalCountLabel.text = viewModel.outputTotalcountText.value
+            totalCountLabel.text = viewModel.output.totalCountText.value
         }
     }
     
@@ -68,9 +68,9 @@ class ShoppingResultViewController: UIViewController {
     
     // 필터 버튼
     @objc private func sortReloadData(_ sender: CategoryButton) {
-        if viewModel.inputCategory.value != sender.buttonTag {
+        if viewModel.input.selectedCategory.value != sender.buttonTag {
             print("실행 버튼 버튼 ")
-            viewModel.inputCategory.value = sender.buttonTag
+            viewModel.input.selectedCategory.value = sender.buttonTag
         }
        
     }
@@ -80,12 +80,12 @@ class ShoppingResultViewController: UIViewController {
 //MARK: 컬렉션 뷰
 extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewLayoutProtocol {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.outputProductList.value.count
+        return viewModel.output.productList.value.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingResultCollectionViewCell.identifier, for: indexPath) as! ShoppingResultCollectionViewCell
-        let item = viewModel.outputProductList.value[indexPath.item]
+        let item = viewModel.output.productList.value[indexPath.item]
         cell.setCellItems(item: item)
         
         return cell
@@ -161,7 +161,7 @@ extension ShoppingResultViewController: ViewdesignProtocol {
     
     func configureView() {
         view.backgroundColor = .black
-        navigationItem.title = viewModel.outputSearchWord.value
+        navigationItem.title = viewModel.output.searchWord.value
         if let navigationBar = self.navigationController?.navigationBar {
             navigationBar.titleTextAttributes = [
                 NSAttributedString.Key.foregroundColor: UIColor.white,
