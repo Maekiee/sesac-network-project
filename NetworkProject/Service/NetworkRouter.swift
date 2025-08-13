@@ -11,7 +11,7 @@ enum NetworkRouter {
     var endpoint: URL {
         switch self {
         case .list(word: let word, filterCase: let filterCase, startPoint: let startPoint):
-            URL(string: baseURL + "v1/search/shop.json?query=\(word)&sort=\(filterCase)&start=\(startPoint)&display=100")!
+            URL(string: baseURL + "v1/search/shop.json?query=\(word)&sort=\(filterCase)&start=\(startPoint)&display=20")!
         }
     }
     

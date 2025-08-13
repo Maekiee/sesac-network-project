@@ -21,7 +21,8 @@ struct Product: Decodable {
     
     
     var pureTitle: String {
-        title.removeHtml
+//        title.removeHtml
+        title.replacingOccurrences(of: "<b>", with: "").replacingOccurrences(of: "</b>", with: "")
     }
     var imageURL: URL {
         URL(string: image)!

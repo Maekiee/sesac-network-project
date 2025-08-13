@@ -21,6 +21,7 @@ class ShoppingResultCollectionViewCell: UICollectionViewCell {
     let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
+        label.font = .systemFont(ofSize: 14)
         label.numberOfLines = 2
         return label
     }()

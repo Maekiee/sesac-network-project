@@ -69,7 +69,6 @@ class ShoppingResultViewController: UIViewController {
     // 필터 버튼
     @objc private func sortReloadData(_ sender: CategoryButton) {
         if viewModel.input.selectedCategory.value != sender.buttonTag {
-            print("실행 버튼 버튼 ")
             viewModel.input.selectedCategory.value = sender.buttonTag
         }
        
@@ -87,27 +86,19 @@ extension ShoppingResultViewController: UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingResultCollectionViewCell.identifier, for: indexPath) as! ShoppingResultCollectionViewCell
         let item = viewModel.output.productList.value[indexPath.item]
-        
         cell.setCellItems(item: item)
         return cell
     }
     
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        // 페이지네이션
-//        if indexPath.item == (newItems.count - 3) && newItems.count < totalCount {
-//            listCount = newItems.count + 1
-//            NetworkManager.shared.getShoppingData(searchWord: searchWord, sortCase: currentCategory, count: listCount) { resultValue in
-//                switch resultValue {
-//                case .success(let value):
-//                    self.newItems.append(contentsOf: value.items)
-////                    self.searchTotalCountLabel.text = "\(NumberFormat.shared.formatNum(from: value.total)) 개의 검색 결과"
-//                case .failure(let error):
-//                    self.showAlert(tip: "페이지 네이션 에러")
-//                    print("에러입니다.: \(error)")
-//                }
-//            }
-//        }
+        let items = viewModel.output.productList.value
+        let totalCount = viewModel.output.totalCount.value
+        
+        if indexPath.item == (items.count - 3) && items.count < totalCount {
+            viewModel.input.startPoint.value = items.count + 1
+            viewModel.input.pagingTrigger.value = ()
+        }
     }
     
     //MARK: - 셀 크기
